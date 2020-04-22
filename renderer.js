@@ -52,28 +52,31 @@ document.getElementById('pdfjsBtn').addEventListener('click', function() {
 
   // `file://${PDF_JS_PATH}?file=${decodeURIComponent(url)}`
 
-  // let viewerUrl = path.join('file://', __dirname, `node_modules/electron-pdf-window/pdfjs/web/viewer.html?file=${decodeURIComponent(url)}`)
-  // document.getElementById('urlSpan').innerHTML = viewerUrl
-  // const win = new BrowserWindow({width: 1000, height: 660, frame: false, webPreferences: {
-  //   devTools: true
-  // }})
-  // // win.webContents.openDevTools ()
-  // // win.loadURL(viewerUrl) // ${}
-  // // file://<path>/pdfjs/web/viewer.html?file=pdf.pdf
-  // win.show()
+  // let viewerUrl = path.join('file://', __dirname, `node_modules/electron-pdf-window/pdfjs/web/viewer.html?file=`)
+  let viewerUrl = path.join('file://', __dirname, 'previewStartLoading.html')
+  const win = new BrowserWindow({width: 1000, height: 660, frame: false, webPreferences: {
+    devTools: true
+  }})
+  // win.webContents.openDevTools ()
+  // win.loadURL(viewerUrl) // ${}
+  // file://<path>/pdfjs/web/viewer.html?file=pdf.pdf
+  win.show()
 
+  // left
+  let viewL = new BrowserView()
+  win.addBrowserView(viewL)
+  viewL.setBounds({ x: 0, y: 0, width: 600, height: 660 })
+  viewL.setAutoResize({horizontal: true, vertical: true})
+  viewL.webContents.loadURL(viewerUrl)
 
-  // // left
-  // let viewL = new BrowserView()
-  // win.addBrowserView(viewL)
-  // viewL.setBounds({ x: 0, y: 0, width: 600, height: 660 })
-  // viewL.setAutoResize({horizontal: true, vertical: true})
-  // viewL.webContents.loadURL(viewerUrl)
+  ipcRenderer.on('wrote-pdf', (event, pdfpath) => {
+    viewL.webContents.loadURL(pdfpath)
+  })
 
-  // // right
-  // let viewR = new BrowserView()
-  // win.addBrowserView(viewR)
-  // viewR.setBounds({ x: 600, y: 0, width: 400, height: 660 })
-  // viewR.setAutoResize({horizontal: true, vertical: true})
-  // viewR.webContents.loadURL(path.join('file://', __dirname, 'previewSidebar.html'))
+  // right
+  let viewR = new BrowserView()
+  win.addBrowserView(viewR)
+  viewR.setBounds({ x: 600, y: 0, width: 400, height: 660 })
+  viewR.setAutoResize({horizontal: true, vertical: true})
+  viewR.webContents.loadURL(path.join('file://', __dirname, 'previewSidebar.html'))
 })

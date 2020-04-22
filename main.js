@@ -73,24 +73,26 @@ function createWindow () {
         // 弹窗打印预览============
         let viewerUrl = path.join('file://', __dirname, `node_modules/electron-pdf-window/pdfjs/web/viewer.html?file=${decodeURIComponent('file://' + pdfPath)}`)
         console.log('========print pdf create====', viewerUrl)
-        const win = new BrowserWindow({width: 1000, height: 660, frame: false, webPreferences: {
-          devTools: true
-        }})
-        win.show()
+        event.sender.send('wrote-pdf', viewerUrl)
 
-        // left
-        let viewL = new BrowserView()
-        win.addBrowserView(viewL)
-        viewL.setBounds({ x: 0, y: 0, width: 600, height: 660 })
-        viewL.setAutoResize({horizontal: true, vertical: true})
-        viewL.webContents.loadURL(viewerUrl)
+        // const win = new BrowserWindow({width: 1000, height: 660, frame: false, webPreferences: {
+        //   devTools: true
+        // }})
+        // win.show()
 
-        // right
-        let viewR = new BrowserView()
-        win.addBrowserView(viewR)
-        viewR.setBounds({ x: 600, y: 0, width: 400, height: 660 })
-        viewR.setAutoResize({horizontal: true, vertical: true})
-        viewR.webContents.loadURL(path.join('file://', __dirname, 'previewSidebar.html'))
+        // // left
+        // let viewL = new BrowserView()
+        // win.addBrowserView(viewL)
+        // viewL.setBounds({ x: 0, y: 0, width: 600, height: 660 })
+        // viewL.setAutoResize({horizontal: true, vertical: true})
+        // viewL.webContents.loadURL(viewerUrl)
+
+        // // right
+        // let viewR = new BrowserView()
+        // win.addBrowserView(viewR)
+        // viewR.setBounds({ x: 600, y: 0, width: 400, height: 660 })
+        // viewR.setAutoResize({horizontal: true, vertical: true})
+        // viewR.webContents.loadURL(path.join('file://', __dirname, 'previewSidebar.html'))
       })
     }).catch(error => {
       console.log('========print to pdf success====', error)
