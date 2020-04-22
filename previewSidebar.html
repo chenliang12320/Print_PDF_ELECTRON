@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Print preview</title>
+    <script>
+      function layoutChange () {
+        var layout = document.getElementById('layoutProp')
+        layout.value
+      }
+    </script>
+  </head>
+  <body>
+    <div>
+      <form class="navbar-form navbar-left" role="search">
+        <div class="form-group">
+          目标打印机: <select></select>
+        </div>
+        <div class="form-group">
+          纸张尺寸: <select></select>
+        </div>
+        <div class="form-group">
+          <label>布局: </label>
+          <select id="layoutProp" name="layoutSelect" onchange="layoutChange()">
+            <option value="1">纵向</option>
+            <option value="2">横向</option>
+          </select>
+        </div>
+        <div class="form-group">
+          份数: <input type="text" class="form-control" placeholder="Search">
+        </div>
+        <div id="showDiv"></div>
+        <button type="submit" class="btn btn-default">Cofirm</button><!--直接打印-->
+        <button type="submit" class="btn btn-default">Cancel</button><!--cancel-->
+      </form>
+    </div>
+  </body>
+</html>
