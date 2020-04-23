@@ -7,7 +7,7 @@
       const {ipcRenderer} = require('electron')
       const paperSizeEnum = ['A3', 'A4', 'A5', 'Legal', 'Letter', 'Tabloid']
       const layout = ['portrait', 'landscape']
-      const { showPrintPreviewLoading, printToPdf } = require('./printPreview')
+      const { showPrintPreviewLoading, printToPdf, getPrinters } = require('./printPreview')
       
       let viewLId = null
       ipcRenderer.on('getViewLId', (event, id) => {
@@ -26,6 +26,19 @@
         showPrintPreviewLoading(viewLId)
         printToPdf({ landscape, pageSize }, viewLId)
       }
+
+      let printers = getPrinters()
+      let html = ''
+      if (printers && printers.length > 0) {
+        printers.map(({name, isDefault, status}) => {
+          html += '<option value="'+ name +'" '+ (isDefault ? 'selected' : '') +' >'+ name +'</option>'
+        })
+      }
+      
+      setTimeout(() => {
+        document.getElementById('destinations').innerHTML = html
+      }, 3000)
+
     </script>
   </head>
   <body>
@@ -33,7 +46,7 @@
       <form class="navbar-form navbar-left" role="search">
         <div class="form-group">
           <label>Destination</label>
-          <select></select>
+          <select id="destinations"></select>
         </div>
         <div class="form-group">
           <label>Copies</label>

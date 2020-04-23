@@ -26,7 +26,7 @@ const showPrintPreview = () => {
   viewR.setBounds({ x: 600, y: 0, width: 400, height: 660 })
   viewR.setAutoResize({horizontal: true, vertical: true})
   viewR.webContents.loadURL(path.join('file://', __dirname, 'previewSidebar.html'))
-  // viewR.webContents.openDevTools()
+  viewR.webContents.openDevTools()
 
   // send viewL id to page renderer process
   viewR.webContents.on("did-finish-load", () => {
@@ -64,10 +64,22 @@ const printToPdf = (options, viewLId) => {
   }
 }
 
+// get sytem printers
+const getPrinters = () => {
+  let printers = []
+  let win = BrowserWindow.getFocusedWindow()
+  if (win) {
+    printers = win.webContents.getPrinters()
+    console.log('====printers====', printers)
+  }
+  return printers
+}
+
 if (exports) {
   exports.showPrintPreview = showPrintPreview
   exports.showPrintPreviewLoading = showPrintPreviewLoading
   exports.printToPdf = printToPdf
+  exports.getPrinters = getPrinters
 } else {
   // export {showPrintPreview, showPrintPreviewLoading, printToPdf}
 }
