@@ -53,53 +53,25 @@ function createWindow () {
 
   })
 
-  ipcMain.on('print-to-pdf', (event) => {
-    // 收到打印指令============
+  // print to pdf
+  ipcMain.on('print-to-pdf', (event, options) => {
     console.log('========receive print command====')
-
-    // 生成PDF文件============
     const pdfPath = path.join(__dirname, 'print_pdf_temp/print.pdf')
-    // const win = BrowserWindow.fromWebContents(event.sender)
-    console.log('==============pdfPath========', pdfPath)
-    // 使用默认打印参数
-    mainWindow.webContents.printToPDF({}).then(data => {
-      console.log('========print to pdf success====', data)
+    mainWindow.webContents.printToPDF(options).then(data => {
+      console.log('========print to pdf success====')
       fs.writeFile(pdfPath, data, (error) => {
-        console.log('========write to pdf file====', error)
         if (error) throw error
-        // shell.openExternal(`file://${pdfPath}`)
-        // event.sender.send('wrote-pdf', pdfPath)
 
         // 弹窗打印预览============
         let viewerUrl = path.join('file://', __dirname, `node_modules/electron-pdf-window/pdfjs/web/viewer.html?file=${decodeURIComponent('file://' + pdfPath)}`)
         console.log('========print pdf create====', viewerUrl)
-        event.sender.send('wrote-pdf', viewerUrl)
-
-        // const win = new BrowserWindow({width: 1000, height: 660, frame: false, webPreferences: {
-        //   devTools: true
-        // }})
-        // win.show()
-
-        // // left
-        // let viewL = new BrowserView()
-        // win.addBrowserView(viewL)
-        // viewL.setBounds({ x: 0, y: 0, width: 600, height: 660 })
-        // viewL.setAutoResize({horizontal: true, vertical: true})
-        // viewL.webContents.loadURL(viewerUrl)
-
-        // // right
-        // let viewR = new BrowserView()
-        // win.addBrowserView(viewR)
-        // viewR.setBounds({ x: 600, y: 0, width: 400, height: 660 })
-        // viewR.setAutoResize({horizontal: true, vertical: true})
-        // viewR.webContents.loadURL(path.join('file://', __dirname, 'previewSidebar.html'))
+        event.reply('wrote-pdf', viewerUrl)
       })
     }).catch(error => {
+      event.reply('wrote-pdf', 'error')
       console.log('========print to pdf success====', error)
     })
   })
-
-  // mainWindow.loadURL('http://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf')
 }
 
 // This method will be called when Electron has finished

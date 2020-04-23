@@ -4,9 +4,27 @@
     <meta charset="UTF-8">
     <title>Print preview</title>
     <script>
-      function layoutChange () {
-        var layout = document.getElementById('layoutProp')
-        layout.value
+      const {ipcRenderer} = require('electron')
+      const paperSizeEnum = ['A3', 'A4', 'A5', 'Legal', 'Letter', 'Tabloid']
+      const layout = ['portrait', 'landscape']
+      const { showPrintPreviewLoading, printToPdf } = require('./printPreview')
+      
+      let viewLId = null
+      ipcRenderer.on('getViewLId', (event, id) => {
+        viewLId = id
+      })
+
+      function toPrintToPdf() {
+        // print layout, values: ['portrait', 'landscape']
+        let layoutSelect = document.getElementById('layoutSelect')
+        let landscape = layoutSelect.value == 'landscape'
+
+        // paper size, values: ['A3', 'A4', 'A5', 'Legal', 'Letter', 'Tabloid']
+        let paperSizeSelect = document.getElementById('paperSizeSelect')
+        let pageSize = paperSizeSelect.value
+
+        showPrintPreviewLoading(viewLId)
+        printToPdf({ landscape, pageSize }, viewLId)
       }
     </script>
   </head>
@@ -14,24 +32,37 @@
     <div>
       <form class="navbar-form navbar-left" role="search">
         <div class="form-group">
-          目标打印机: <select></select>
+          <label>Destination</label>
+          <select></select>
         </div>
         <div class="form-group">
-          纸张尺寸: <select></select>
+          <label>Copies</label>
+          <input type="text" class="form-control" placeholder="Search">
         </div>
         <div class="form-group">
-          <label>布局: </label>
-          <select id="layoutProp" name="layoutSelect" onchange="layoutChange()">
-            <option value="1">纵向</option>
-            <option value="2">横向</option>
+          <label>Layout</label>
+          <select id="layoutSelect" onchange="toPrintToPdf()">
+            <option value="portrait" selected>Portrait</option>
+            <option value="landscape">Landscape</option>
           </select>
         </div>
         <div class="form-group">
-          份数: <input type="text" class="form-control" placeholder="Search">
+          <label>Paper size</label>
+          <select id="paperSizeSelect" onchange="toPrintToPdf()">
+            <option value="A3">A3</option>
+            <option value="A4" selected>A4</option>
+            <option value="A5">A5</option>
+            <option value="Legal">Legal</option>
+            <option value="Letter">Letter</option>
+            <option value="Tabloid">Tabloid</option>
+          </select>
         </div>
-        <div id="showDiv"></div>
-        <button type="submit" class="btn btn-default">Cofirm</button><!--直接打印-->
-        <button type="submit" class="btn btn-default">Cancel</button><!--cancel-->
+
+        <!--print slient-->
+        <button type="submit" class="btn btn-default">Cofirm</button>
+
+        <!--cancel-->
+        <button type="submit" class="btn btn-default">Cancel</button>
       </form>
     </div>
   </body>
