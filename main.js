@@ -55,7 +55,7 @@ function createWindow () {
 
   // print to pdf
   ipcMain.on('print-to-pdf', (event, options) => {
-    console.log('========receive print command====')
+    console.log('========receive print command====', options)
     const pdfPath = path.join(__dirname, 'print_pdf_temp/print.pdf')
     mainWindow.webContents.printToPDF(options).then(data => {
       console.log('========print to pdf success====')
@@ -70,6 +70,15 @@ function createWindow () {
     }).catch(error => {
       event.reply('wrote-pdf', 'error')
       console.log('========print to pdf success====', error)
+    })
+  })
+
+  // print slient
+  ipcMain.on('print-slient', (event, options) => {
+    console.log('========receive slient print command====', {...options})
+    mainWindow.webContents.print({silent: true, printBackground: true, collate: true, ...options}, (success, errorType) => {
+      console.log('print callback==========', success, errorType)
+      if (!success) console.log(errorType)
     })
   })
 }

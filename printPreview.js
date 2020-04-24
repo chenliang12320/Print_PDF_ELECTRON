@@ -9,6 +9,10 @@ const showPrintPreview = () => {
     devTools: true,
     nodeIntegration: true
   }})
+
+  win.on('closed', function () {
+    win = null
+  })
   win.show()
 
   // left
@@ -26,7 +30,7 @@ const showPrintPreview = () => {
   viewR.setBounds({ x: 600, y: 0, width: 400, height: 660 })
   viewR.setAutoResize({horizontal: true, vertical: true})
   viewR.webContents.loadURL(path.join('file://', __dirname, 'previewSidebar.html'))
-  viewR.webContents.openDevTools()
+  // viewR.webContents.openDevTools()
 
   // send viewL id to page renderer process
   viewR.webContents.on("did-finish-load", () => {
@@ -75,11 +79,36 @@ const getPrinters = () => {
   return printers
 }
 
+// print silent
+const printSilent = (options, viewLId) => {
+  // let { landscape, pageSize, deviceName, copies } = options
+  // if (viewLId) {
+  //   let viewL = BrowserView.fromId(Number(viewLId))
+  //   if (viewL) {
+  //     viewL.webContents.print({silent: true, landscape, pageSize, deviceName, copies}, (success, errorType) => {
+  //       if (!success) console.log(errorType)
+  //     })
+  //   }
+  // }
+  ipcRenderer.send('print-slient', options)
+  closePrintPreview()
+}
+
+// close print preview
+const closePrintPreview = () => {
+  let win = BrowserWindow.getFocusedWindow()
+  if (win) {
+    win.close()
+  }
+}
+
 if (exports) {
   exports.showPrintPreview = showPrintPreview
   exports.showPrintPreviewLoading = showPrintPreviewLoading
   exports.printToPdf = printToPdf
   exports.getPrinters = getPrinters
+  exports.printSilent = printSilent
+  exports.closePrintPreview = closePrintPreview
 } else {
   // export {showPrintPreview, showPrintPreviewLoading, printToPdf}
 }
